@@ -1,25 +1,56 @@
 (function() {
 	'use strict';
 
-	angular.module('app_mod1', [])
-	.controller('app_mod1_controller', LunchCheckController);
+	angular.module('MyApp', [])
+	.controller('ToBuyController', ToBuyController)
+	.controller('AlreadyBoughtController', AlreadyBoughtController)
+	.service('ShoppingListCheckOffService', ShoppingListCheckOffService);
 
-	LunchCheckController.$inject = ['$scope', '$filter'];
-	function LunchCheckController($scope, $filter) {
-		$scope.checkTooMuch = function() {
-			console.log($scope.input_foods);
-			if ($scope.input_foods == undefined || $scope.input_foods.trim().length == 0) {
-				$scope.message_result = "Please enter data first";
-			} else {
-				var foods = $scope.input_foods.split(',');
-				foods = foods.filter(function(e) { return e.trim().length !== 0 });
+	ToBuyController.$inject = ['ShoppingListCheckOffService']
+	function ToBuyController(ShoppingListCheckOffService) {
+		var self = this;
+		self.items = function() {
+			return ShoppingListCheckOffService.toBuyList;
+		}
 
-				if (foods.length > 3) {
-				 	$scope.message_result = "Too much!"
-				} else {
-					$scope.message_result = "Enjoy!"
-				}
-			}
+		self.moveToBought = function(index) {
+			ShoppingListCheckOffService.moveToBoughtItem(index);
+		}
+
+		self.isEmpty = function() {
+			return ShoppingListCheckOffService.toBuyList.length == 0;
+		}
+	}
+
+	AlreadyBoughtController.$inject = ['ShoppingListCheckOffService']
+	function AlreadyBoughtController(ShoppingListCheckOffService) {
+		var self = this;
+		self.items = function() {
+			return ShoppingListCheckOffService.boughtList;
+		}
+
+		self.isEmpty = function() {
+			return ShoppingListCheckOffService.boughtList.length == 0;
+		}
+	}
+
+	function ShoppingListCheckOffService() {
+		var service = this;
+
+		service.toBuyList = [
+			{name:"Cookie", quantity:10},
+			{name:"Candy", quantity:5},
+			{name:"Ice cream", quantity:20},
+			{name:"Chocolate", quantity:50},
+			{name:"Juice", quantity:15},
+		];
+
+		service.boughtList = [];
+
+		service.moveToBoughtItem = function(indexInToBuyList) {
+			var item = service.toBuyList[indexInToBuyList];
+			service.toBuyList.splice(indexInToBuyList, 1);
+			service.boughtList.push(item)
 		}
 	}
 })();
