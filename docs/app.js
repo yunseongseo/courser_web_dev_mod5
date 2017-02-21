@@ -1,56 +1,69 @@
 (function() {
+
 	'use strict';
+	angular.module('NarrowItDownApp', [])
+	.controller('NarrowItDownController', NarrowItDownController)
+	.service('MenuSearchService', MenuSearchService)
+	.directive('foundItems', FoundItems);
 
-	angular.module('MyApp', [])
-	.controller('ToBuyController', ToBuyController)
-	.controller('AlreadyBoughtController', AlreadyBoughtController)
-	.service('ShoppingListCheckOffService', ShoppingListCheckOffService);
 
-	ToBuyController.$inject = ['ShoppingListCheckOffService']
-	function ToBuyController(ShoppingListCheckOffService) {
+	FoundItems.$inject = [];
+	function FoundItems() {
+		var ddo = {
+			templateUrl:'founditem.html',
+			restrict : "AE",
+			scope: {
+				items: '<',
+				onRemove: '&',
+			},
+		};
+		return ddo;
+	}
+
+	NarrowItDownController.$inject = ['$scope', 'MenuSearchService'];
+	function NarrowItDownController($scope, MenuSearchService) {
 		var self = this;
-		self.items = function() {
-			return ShoppingListCheckOffService.toBuyList;
-		}
+		self.found = [];
+		
+		self.search = function() {
+			var promise = MenuSearchService.getMatchedMenuItems($scope.search_term);
+			promise.then(function(result) {
+				self.found = MenuSearchService.getFoundItems();
+			});
+		};
 
-		self.moveToBought = function(index) {
-			ShoppingListCheckOffService.moveToBoughtItem(index);
-		}
-
-		self.isEmpty = function() {
-			return ShoppingListCheckOffService.toBuyList.length == 0;
+		self.removeItem = function(index) {
+			self.found.splice(index, 1);
 		}
 	}
 
-	AlreadyBoughtController.$inject = ['ShoppingListCheckOffService']
-	function AlreadyBoughtController(ShoppingListCheckOffService) {
-		var self = this;
-		self.items = function() {
-			return ShoppingListCheckOffService.boughtList;
-		}
 
-		self.isEmpty = function() {
-			return ShoppingListCheckOffService.boughtList.length == 0;
-		}
-	}
 
-	function ShoppingListCheckOffService() {
+	MenuSearchService.$inject = ['$http', '$q'];
+	function MenuSearchService($http, $q) {
 		var service = this;
+		var foundItems = [];
 
-		service.toBuyList = [
-			{name:"Cookie", quantity:10},
-			{name:"Candy", quantity:5},
-			{name:"Ice cream", quantity:20},
-			{name:"Chocolate", quantity:50},
-			{name:"Juice", quantity:15},
-		];
+		service.getMatchedMenuItems = function(searchTerm) {
+			var deferred = $q.defer();
+			$http({
+				method: 'GET',
+				url: 'https://davids-restaurant.herokuapp.com/menu_items.json',
+			}).then(function (result) {
+				var loaded = result.data.menu_items;
+				for (var i = 0; i < loaded.length; i++) {
+					if (loaded[i].description.includes(searchTerm)) {
+						foundItems.push(loaded[i]);
+					}
+				}
+				deferred.resolve(result);
+			});
 
-		service.boughtList = [];
+			return deferred.promise;
+		};
 
-		service.moveToBoughtItem = function(indexInToBuyList) {
-			var item = service.toBuyList[indexInToBuyList];
-			service.toBuyList.splice(indexInToBuyList, 1);
-			service.boughtList.push(item)
+		service.getFoundItems = function() {
+			return foundItems;
 		}
 	}
 })();
