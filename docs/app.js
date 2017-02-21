@@ -24,11 +24,21 @@
 	function NarrowItDownController($scope, MenuSearchService) {
 		var self = this;
 		self.found = [];
-		
+		self.errMsg = "";
 		self.search = function() {
+			self.found = [];
+			if ($scope.search_term === undefined || $scope.search_term.trim().length == 0) {
+				self.errMsg = "Nothing Found";
+				return;
+			}
 			var promise = MenuSearchService.getMatchedMenuItems($scope.search_term);
 			promise.then(function(result) {
 				self.found = MenuSearchService.getFoundItems();
+				if (self.found.length == 0) {
+					self.errMsg = "Nothing Found";
+				} else {
+					self.errMsg = "";
+				}
 			});
 		};
 
@@ -36,7 +46,6 @@
 			self.found.splice(index, 1);
 		}
 	}
-
 
 
 	MenuSearchService.$inject = ['$http', '$q'];
