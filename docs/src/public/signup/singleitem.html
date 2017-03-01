@@ -1,0 +1,9 @@
+
+<div ng-if="!$ctrl.failed">
+	<span>Title : </span><span> {{ $ctrl.menu.name }} </span><br>
+	<span>Description : </span><span> {{ $ctrl.menu.description }} </span><br>
+	<img width="200" height="200" ng-src="images/menu/{{ $ctrl.menu.category_short_name}}/{{ $ctrl.menu.category_short_name}}.jpg" alt="{{ $ctrl.menu.name}}">
+</div>
+<div ng-if="$ctrl.failed">
+	<span>No such menu number exists</span>
+</div>
