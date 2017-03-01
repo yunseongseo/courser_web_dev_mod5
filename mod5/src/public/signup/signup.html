@@ -1,0 +1,35 @@
+<form name="signupForm" novalidate>
+	<span>First name</span>
+	<input type="text" ng-model="signupCtrl.firstname" name="firstname" required minlength="2">
+	<span ng-if="(signupForm.firstname.$error.minlength || 
+				  signupForm.firstname.$error.required) && signupForm.firstname.$touched">
+		First name should be entered or longer than 2 characters
+	</span>
+	<br>
+	<span>Last name</span>
+	<input type="text" ng-model="signupCtrl.lastname" name="lastname" required minlength="2">
+	<span ng-if="(signupForm.lastname.$error.minlength || 
+				  signupForm.lastname.$error.required) && signupForm.lastname.$touched">
+		Last name should be entered or longer than 2 characters
+	</span>
+	<br>
+	<span>E-Mail</span>
+	<input type="email" ng-model="signupCtrl.email" name="email" required>
+	<span ng-if="signupForm.email.$invalid && signupForm.email.$touched">
+		Email format is not correct
+	</span>
+	<br>
+	<span>Phone</span>
+	<input type="text" ng-model="signupCtrl.phone" name="phone" required pattern="(\d{3})-(\d{3})-(\d{4})">
+	<span ng-if="signupForm.phone.$invalid && signupForm.phone.$touched">
+		Phone number format is not correct
+	</span>
+	<br>
+	<span>Favorite Menu</span>
+	<input type="text" ng-model="signupCtrl.menu_shortname" name="short_name" required>
+	<br>
+	<button ng-disabled="signupForm.$invalid" ng-click="signupCtrl.submit()">Submit</button>
+	<span ng-if="signupCtrl.registered">
+		Your information has been saved.
+	</span>
+</form>

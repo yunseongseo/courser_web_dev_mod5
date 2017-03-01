@@ -1,0 +1,24 @@
+
+
+<div ng-if="$ctrl.myInfo != null">
+	<span>First name : </span><span> {{ $ctrl.myInfo.firstname }}</span><br>
+	<span>Last name : </span><span> {{ $ctrl.myInfo.lastname }}</span><br>
+	<span>Email : </span><span> {{ $ctrl.myInfo.email }}</span><br>
+	<span>Phone : </span><span> {{ $ctrl.myInfo.phone }} </span><br>
+	<span>Menu : </span><span> {{ $ctrl.myInfo.menu_shortname }} </span><br>
+	<!-- <div ng-if="$ctrl.menu != null"> -->
+		<!-- <span>{{ $ctrl.menu }}</span>	 -->
+	<!-- </div> -->
+	<!-- <span>Title : </span><span> {{ $ctrl.menu.name }} / {{ $ctrl.menu.category_short_name}} </span><br>
+	<span>Description : </span><span> {{ $ctrl.menu.description }} </span><br>
+	<img width="200" height="200" ng-src="images/menu/{{ $ctrl.menu.category_short_name}}/{{ $ctrl.menu.category_short_name}}.jpg" alt="{{ $ctrl.menu.name}}"> -->
+
+	<favitem selectedmenu="$ctrl.myInfo.menu_shortname"></favitem>
+
+
+	<span ng-if="$ctrl.menu = null">No such menu number exists. or cannot get to server</span>
+</div>
+
+<div ng-if="$ctrl.myInfo == null">
+	<span>Not Signed Up Yet.</span><a href="index.html#/signup"><span>Sign up Now!</span></a>
+</div>
